@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: python app/main.py
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://postgres:postgres@db:5432/olx_scraper_db
+    depends_on:
+      - db
+    networks:
+      - olx_scraper_network
+    ports:
+      - "80:80"
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: olx_scraper_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - olx_scraper_network
+volumes:
+  db_data:
+
+networks:
+  olx_scraper_network:
+    driver: bridge
